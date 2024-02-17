@@ -4,9 +4,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
 from models import User, WordList
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_cors import CORS
+
 
 
 app = Flask(__name__)
+
+CORS(app)
 
 # Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///timesup.db'
