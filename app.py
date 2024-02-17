@@ -78,8 +78,7 @@ def create_wordlist():
 
     data = request.get_json()
     title = data.get('title')
-    words = data.get('words')  # Assuming words are sent as a string, e.g., "word1,word2,word3"
-
+    words = ','.join(data.get('words'))
     if not title or not words:
         return jsonify({"msg": "Title and words are required"}), 400
 
