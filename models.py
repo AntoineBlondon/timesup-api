@@ -18,6 +18,7 @@ class WordList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
     words = db.Column(db.Text)  # A simple way to store words; consider a more structured approach for large lists
+    secret = db.Column(db.Boolean, default=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):

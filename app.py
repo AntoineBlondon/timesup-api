@@ -79,14 +79,15 @@ def create_wordlist():
     data = request.get_json()
     title = data.get('title')
     words = ','.join(data.get('words'))
+    secret = data.get('secret', True)
     if not title or not words:
         return jsonify({"msg": "Title and words are required"}), 400
 
-    wordlist = WordList(title=title, words=words, user_id=user.id)
+    wordlist = WordList(title=title, words=words, user_id=user.id, secret=secret)
     db.session.add(wordlist)
     db.session.commit()
 
-    return jsonify({"msg": "Word list created successfully", "wordlist": {"id": wordlist.id, "title": wordlist.title, "words": wordlist.words.split(",")}}), 201
+    return jsonify({"msg": "Word list created successfully", "wordlist": {"id": wordlist.id, "title": wordlist.title, "words": wordlist.words.split(","), "secret": wordlist.secret}}), 201
 
 @app.route('/wordlists', methods=['GET'])
 @jwt_required()
@@ -96,7 +97,17 @@ def get_wordlists():
     
     wordlists = WordList.query.filter_by(user_id=user.id).all()
     
-    return jsonify([{'id': wl.id, 'title': wl.title, 'words': wl.words.split(',')} for wl in wordlists]), 200
+    return jsonify([{'id': wl.id, 'title': wl.title, 'words': wl.words.split(','), 'secret': wl.secret} for wl in wordlists]), 200
+
+@app.route('/shared-wordlists', methods=['GET'])
+@jwt_required()
+def get_shared_wordlists():
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(username=current_user).first()
+    
+    wordlists = WordList.query.filter_by(secret=False).all()
+    
+    return jsonify([{'id': wl.id, 'title': wl.title, 'words': wl.words.split(','), 'secret': wl.secret} for wl in wordlists]), 200
 
 
 @app.route('/wordlists/<int:list_id>', methods=['PUT'])
@@ -126,7 +137,7 @@ def update_wordlist(list_id):
     wordlist.words = ','.join(current_words_set)
     db.session.commit()
 
-    return jsonify({"msg": "Word list updated", "id": wordlist.id, "title": wordlist.title, "words": list(current_words_set)}), 200
+    return jsonify({"msg": "Word list updated", "id": wordlist.id, "title": wordlist.title, "words": list(current_words_set), "secret": wordlist.secret}), 200
 
 
 
