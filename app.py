@@ -128,6 +128,10 @@ def update_wordlist(list_id):
     if title:
         wordlist.title = title
 
+    secret = data.get('secret')
+    if secret is not None:
+        wordlist.secret = secret
+
     # Assuming words are stored as a comma-separated string in the database
     current_words_set = set(wordlist.words.split(','))
 
