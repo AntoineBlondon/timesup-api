@@ -124,6 +124,10 @@ def update_wordlist(list_id):
     words_to_add = data.get('add', [])  # A list of words to add
     words_to_remove = data.get('remove', [])  # A list of words to remove
 
+    title = data.get('title')
+    if title:
+        wordlist.title = title
+
     # Assuming words are stored as a comma-separated string in the database
     current_words_set = set(wordlist.words.split(','))
 
